@@ -8,17 +8,19 @@ public sealed class HttpServer : IDisposable
     private readonly string _rootDirectory;
     private readonly ILogger _logger;
     private readonly HttpListener _listener = new ();
+    private readonly int _port = 8944;
     private bool _run { get; set; } = true;
 
-    public HttpServer(string rootDirectory, ILogger logger)
+    public HttpServer(string rootDirectory, ILogger logger, int? port = null)
     {
         _rootDirectory = rootDirectory;
         _logger = logger;
+        _port = port ?? 8944;
     }
     public async Task Start()
     {
         string baseDirectory = _rootDirectory;
-        string prefix = "http://localhost:8944/";
+        string prefix = $"http://localhost:{_port}/";
         _listener.Prefixes.Add(prefix);
 
         _logger.LogWarning($"Starting server at {prefix}");
@@ -49,7 +51,10 @@ public sealed class HttpServer : IDisposable
         Stop();
     }
 
-    private async Task ProcessRequest(HttpListenerContext context, string baseDirectory)
+    private async Task ProcessRequest(
+        HttpListenerContext context
+        , string baseDirectory
+        , CancellationToken cancellationToken = default)
     {
         string urlPath = context.Request.Url.AbsolutePath.TrimStart('/');
         string filePath = Path.Combine(baseDirectory, urlPath);
@@ -59,14 +64,14 @@ public sealed class HttpServer : IDisposable
             try
             {
                 string contentType = GetContentType(filePath);
-                byte[] fileBytes = File.ReadAllBytes(filePath);
+                byte[] fileBytes = await File.ReadAllBytesAsync(filePath, cancellationToken);
 
                 context.Response.ContentType = contentType;
                 context.Response.ContentLength64 = fileBytes.Length;
-                await context.Response.OutputStream.WriteAsync(fileBytes, 0, fileBytes.Length);
+                await context.Response.OutputStream.WriteAsync(fileBytes, 0, fileBytes.Length, cancellationToken);
                 context.Response.OutputStream.Close();
 
-                Console.WriteLine($"Served: {urlPath}");
+                _logger.LogDebug($"Served: {urlPath}");
             }
             catch (Exception ex)
             {
