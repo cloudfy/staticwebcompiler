@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>StaticWebCompiler.Cli</RootNamespace>
+    <AssemblyName>swccli</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\StaticWebCompiler.Core\StaticWebCompiler.Core.csproj" />
+  </ItemGroup>
+
+</Project>

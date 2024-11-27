@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  
+  <PropertyGroup>
+    <RootNamespace>StaticWebCompiler</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Handlebars.Net" Version="2.1.6" />
+    <PackageReference Include="Markdig" Version="0.38.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.1" />
+    <PackageReference Include="SharpScss" Version="3.0.0" />
+  </ItemGroup>
+  
+</Project>
